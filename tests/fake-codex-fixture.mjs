@@ -3,10 +3,11 @@ import path from "node:path";
 import process from "node:process";
 
 import { writeExecutable } from "./helpers.mjs";
+import { CODEX_BIN } from "../plugins/codex/scripts/lib/process.mjs";
 
 export function installFakeCodex(binDir, behavior = "review-ok") {
   const statePath = path.join(binDir, "fake-codex-state.json");
-  const scriptPath = path.join(binDir, "codex");
+  const scriptPath = path.join(binDir, CODEX_BIN);
   const source = `#!/usr/bin/env node
 const fs = require("node:fs");
 const crypto = require("node:crypto");
@@ -644,8 +645,8 @@ rl.on("line", (line) => {
   // On Windows, npm global binaries are invoked via .cmd wrappers.
   // Create a codex.cmd so the fake binary is discoverable by spawn with shell: true.
   if (process.platform === "win32") {
-    const cmdWrapper = `@echo off\r\nnode "%~dp0codex" %*\r\n`;
-    fs.writeFileSync(path.join(binDir, "codex.cmd"), cmdWrapper, { encoding: "utf8" });
+    const cmdWrapper = `@echo off\r\nnode "%~dp0${CODEX_BIN}" %*\r\n`;
+    fs.writeFileSync(path.join(binDir, `${CODEX_BIN}.cmd`), cmdWrapper, { encoding: "utf8" });
   }
 }
 

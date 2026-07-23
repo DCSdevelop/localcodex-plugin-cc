@@ -132,8 +132,8 @@ function requireObject(value, label) {
 }
 
 function findMarketplacePlugin(json) {
-  const plugin = json.plugins?.find((entry) => entry?.name === "codex");
-  requireObject(plugin, ".claude-plugin/marketplace.json plugins[codex]");
+  const plugin = json.plugins?.find((entry) => entry?.name === "localdex");
+  requireObject(plugin, ".claude-plugin/marketplace.json plugins[localdex]");
   return plugin;
 }
 

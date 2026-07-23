@@ -42,7 +42,7 @@ import path from "node:path";
 import { readJsonFile } from "./fs.mjs";
 import { BROKER_BUSY_RPC_CODE, BROKER_ENDPOINT_ENV, CodexAppServerClient } from "./app-server.mjs";
 import { loadBrokerSession } from "./broker-lifecycle.mjs";
-import { binaryAvailable } from "./process.mjs";
+import { CODEX_BIN, binaryAvailable } from "./process.mjs";
 
 const SERVICE_NAME = "claude_code_codex_plugin";
 const TASK_THREAD_PREFIX = "Codex Companion Task";
@@ -884,12 +884,12 @@ async function getCodexAuthStatusFromClient(client, cwd) {
 }
 
 export function getCodexAvailability(cwd) {
-  const versionStatus = binaryAvailable("codex", ["--version"], { cwd });
+  const versionStatus = binaryAvailable(CODEX_BIN, ["--version"], { cwd });
   if (!versionStatus.available) {
     return versionStatus;
   }
 
-  const appServerStatus = binaryAvailable("codex", ["app-server", "--help"], { cwd });
+  const appServerStatus = binaryAvailable(CODEX_BIN, ["app-server", "--help"], { cwd });
   if (!appServerStatus.available) {
     return {
       available: false,
@@ -1002,7 +1002,7 @@ export async function interruptAppServerTurn(cwd, { threadId, turnId }) {
 export async function runAppServerReview(cwd, options = {}) {
   const availability = getCodexAvailability(cwd);
   if (!availability.available) {
-    throw new Error("Codex CLI is not installed or is missing required runtime support. Install it with `npm install -g @openai/codex`, then rerun `/codex:setup`.");
+    throw new Error("Codex CLI is not installed or is missing required runtime support. Install localdex: run `scripts/install-localdex.sh` in the codexforlocal repo, then rerun `/localdex:setup`.");
   }
 
   return withAppServer(cwd, async (client) => {
@@ -1058,7 +1058,7 @@ export async function runAppServerReview(cwd, options = {}) {
 export async function importExternalAgentSession(cwd, options = {}) {
   const availability = getCodexAvailability(cwd);
   if (!availability.available) {
-    throw new Error("Codex CLI is not installed or is missing required runtime support. Install it with `npm install -g @openai/codex`, then rerun `/codex:setup`.");
+    throw new Error("Codex CLI is not installed or is missing required runtime support. Install localdex: run `scripts/install-localdex.sh` in the codexforlocal repo, then rerun `/localdex:setup`.");
   }
   if (!options.sourcePath) {
     throw new Error("A Claude session source path is required.");
@@ -1071,7 +1071,7 @@ export async function importExternalAgentSession(cwd, options = {}) {
     } catch (error) {
       if (error?.rpcCode === -32601) {
         throw new Error(
-          "This Codex version does not support Claude session transfer. Update Codex with `npm install -g @openai/codex@latest`, then retry.",
+          "This Codex version does not support Claude session transfer. Update localdex: run `git pull && ./scripts/install-localdex.sh` in the codexforlocal repo, then retry.",
           { cause: error }
         );
       }
@@ -1095,7 +1095,7 @@ export async function importExternalAgentSession(cwd, options = {}) {
 export async function runAppServerTurn(cwd, options = {}) {
   const availability = getCodexAvailability(cwd);
   if (!availability.available) {
-    throw new Error("Codex CLI is not installed or is missing required runtime support. Install it with `npm install -g @openai/codex`, then rerun `/codex:setup`.");
+    throw new Error("Codex CLI is not installed or is missing required runtime support. Install localdex: run `scripts/install-localdex.sh` in the codexforlocal repo, then rerun `/localdex:setup`.");
   }
 
   return withAppServer(cwd, async (client) => {
@@ -1162,7 +1162,7 @@ export async function runAppServerTurn(cwd, options = {}) {
 export async function findLatestTaskThread(cwd) {
   const availability = getCodexAvailability(cwd);
   if (!availability.available) {
-    throw new Error("Codex CLI is not installed or is missing required runtime support. Install it with `npm install -g @openai/codex`, then rerun `/codex:setup`.");
+    throw new Error("Codex CLI is not installed or is missing required runtime support. Install localdex: run `scripts/install-localdex.sh` in the codexforlocal repo, then rerun `/localdex:setup`.");
   }
 
   return withAppServer(cwd, async (client) => {

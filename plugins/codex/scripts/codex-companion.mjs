@@ -189,14 +189,14 @@ async function buildSetupReport(cwd, actionsTaken = []) {
 
   const nextSteps = [];
   if (!codexStatus.available) {
-    nextSteps.push("Install Codex with `npm install -g @openai/codex`.");
+    nextSteps.push("Install localdex: run `scripts/install-localdex.sh` in the codexforlocal repo.");
   }
   if (codexStatus.available && !authStatus.loggedIn && authStatus.requiresOpenaiAuth) {
-    nextSteps.push("Run `!codex login`.");
-    nextSteps.push("If browser login is blocked, retry with `!codex login --device-auth` or `!codex login --with-api-key`.");
+    nextSteps.push("Run `!localdex login`.");
+    nextSteps.push("If browser login is blocked, retry with `!localdex login --device-auth` or `!localdex login --with-api-key`.");
   }
   if (!config.stopReviewGate) {
-    nextSteps.push("Optional: run `/codex:setup --enable-review-gate` to require a fresh review before stop.");
+    nextSteps.push("Optional: run `/localdex:setup --enable-review-gate` to require a fresh review before stop.");
   }
 
   return {
@@ -252,7 +252,7 @@ function buildAdversarialReviewPrompt(context, focusText) {
 function ensureCodexAvailable(cwd) {
   const availability = getCodexAvailability(cwd);
   if (!availability.available) {
-    throw new Error("Codex CLI is not installed or is missing required runtime support. Install it with `npm install -g @openai/codex`, then rerun `/codex:setup`.");
+    throw new Error("Codex CLI is not installed or is missing required runtime support. Install localdex: run `scripts/install-localdex.sh` in the codexforlocal repo, then rerun `/localdex:setup`.");
   }
 }
 
@@ -271,13 +271,13 @@ function buildNativeReviewTarget(target) {
 function validateNativeReviewRequest(target, focusText) {
   if (focusText.trim()) {
     throw new Error(
-      `\`/codex:review\` now maps directly to the built-in reviewer and does not support custom focus text. Retry with \`/codex:adversarial-review ${focusText.trim()}\` for focused review instructions.`
+      `\`/localdex:review\` now maps directly to the built-in reviewer and does not support custom focus text. Retry with \`/localdex:adversarial-review ${focusText.trim()}\` for focused review instructions.`
     );
   }
 
   const nativeTarget = buildNativeReviewTarget(target);
   if (!nativeTarget) {
-    throw new Error("This `/codex:review` target is not supported by the built-in reviewer. Retry with `/codex:adversarial-review` for custom targeting.");
+    throw new Error("This `/localdex:review` target is not supported by the built-in reviewer. Retry with `/localdex:adversarial-review` for custom targeting.");
   }
 
   return nativeTarget;
@@ -340,7 +340,7 @@ async function resolveLatestTrackedTaskThread(cwd, options = {}) {
   const visibleJobs = filterJobsForCurrentClaudeSession(jobs);
   const activeTask = visibleJobs.find((job) => job.jobClass === "task" && (job.status === "queued" || job.status === "running"));
   if (activeTask) {
-    throw new Error(`Task ${activeTask.id} is still running. Use /codex:status before continuing it.`);
+    throw new Error(`Task ${activeTask.id} is still running. Use /localdex:status before continuing it.`);
   }
 
   const trackedTask = findLatestResumableTaskJob(visibleJobs);
@@ -554,7 +554,7 @@ function buildTaskRunMetadata({ prompt, resumeLast = false }) {
 }
 
 function renderQueuedTaskLaunch(payload) {
-  return `${payload.title} started in the background as ${payload.jobId}. Check /codex:status ${payload.jobId} for progress.\n`;
+  return `${payload.title} started in the background as ${payload.jobId}. Check /localdex:status ${payload.jobId} for progress.\n`;
 }
 
 function getJobKindLabel(kind, jobClass) {
@@ -629,7 +629,7 @@ async function executeTransfer(cwd, options = {}) {
   const result = await importExternalAgentSession(cwd, { sourcePath });
   const payload = {
     threadId: result.threadId,
-    resumeCommand: `codex resume ${result.threadId}`,
+    resumeCommand: `localdex resume ${result.threadId}`,
     sourcePath,
     sessionId: path.basename(sourcePath, ".jsonl")
   };

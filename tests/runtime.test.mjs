@@ -211,7 +211,7 @@ test("transfer delegates the current Claude session directly to native import", 
       { type: "custom-title", customTitle: "Native transfer" },
       { type: "user", cwd: repo, message: { role: "user", content: "Initial request" } },
       { type: "assistant", cwd: repo, message: { role: "assistant", content: "Initial answer" } },
-      { type: "user", cwd: repo, message: { role: "user", content: "/codex:transfer" } }
+      { type: "user", cwd: repo, message: { role: "user", content: "/localdex:transfer" } }
     ].map((entry) => JSON.stringify(entry)).join("\n") + "\n",
     "utf8"
   );
@@ -229,7 +229,7 @@ test("transfer delegates the current Claude session directly to native import", 
   const payload = JSON.parse(result.stdout);
   const canonicalSourcePath = fs.realpathSync(sourcePath);
   assert.equal(payload.threadId, "thr_1");
-  assert.equal(payload.resumeCommand, "codex resume thr_1");
+  assert.equal(payload.resumeCommand, "localdex resume thr_1");
   assert.equal(payload.sourcePath, canonicalSourcePath);
   assert.equal(payload.sessionId, sessionId);
 
@@ -240,7 +240,7 @@ test("transfer delegates the current Claude session directly to native import", 
   assert.equal(fakeState.lastExternalAgentImport.sourcePath, canonicalSourcePath);
   assert.deepEqual(
     fakeState.threads[0].visibleMessages.map((message) => message.text),
-    ["Initial request", "Initial answer", "/codex:transfer"]
+    ["Initial request", "Initial answer", "/localdex:transfer"]
   );
 });
 
@@ -271,7 +271,7 @@ test("transfer reports an actionable upgrade error when native import is unsuppo
 
   assert.notEqual(result.status, 0);
   assert.match(result.stderr, /does not support Claude session transfer/);
-  assert.match(result.stderr, /@openai\/codex@latest/);
+  assert.match(result.stderr, /install-localdex\.sh/);
 });
 
 test("transfer fails visibly when native import completes without a ledger record", () => {
@@ -986,7 +986,7 @@ test("review rejects focus text because it is native-review only", () => {
 
   assert.equal(result.status > 0, true);
   assert.match(result.stderr, /does not support custom focus text/i);
-  assert.match(result.stderr, /\/codex:adversarial-review focus on auth/i);
+  assert.match(result.stderr, /\/localdex:adversarial-review focus on auth/i);
 });
 
 test("review rejects staged-only scope because it is native-review only", () => {
@@ -1145,19 +1145,19 @@ test("status shows phases, hints, and the latest finished job", () => {
   assert.match(result.stdout, /Active jobs:/);
   assert.match(result.stdout, /\| Job \| Kind \| Status \| Phase \| Elapsed \| Codex Session ID \| Summary \| Actions \|/);
   assert.match(result.stdout, /\| review-live \| review \| running \| reviewing \| .* \| thr_1 \| Review working tree diff \|/);
-  assert.match(result.stdout, /`\/codex:status review-live`<br>`\/codex:cancel review-live`/);
+  assert.match(result.stdout, /`\/localdex:status review-live`<br>`\/localdex:cancel review-live`/);
   assert.match(result.stdout, /Live details:/);
   assert.match(result.stdout, /Latest finished:/);
   assert.match(result.stdout, /Progress:/);
   assert.match(result.stdout, /Session runtime: direct startup/);
   assert.match(result.stdout, /Phase: reviewing/);
   assert.match(result.stdout, /Codex session ID: thr_1/);
-  assert.match(result.stdout, /Resume in Codex: codex resume thr_1/);
+  assert.match(result.stdout, /Resume in Codex: localdex resume thr_1/);
   assert.match(result.stdout, /Thread ready \(thr_1\)\./);
   assert.match(result.stdout, /Reviewer started: current changes/);
   assert.match(result.stdout, /Duration: 1m 5s/);
   assert.match(result.stdout, /Codex session ID: thr_done/);
-  assert.match(result.stdout, /Resume in Codex: codex resume thr_done/);
+  assert.match(result.stdout, /Resume in Codex: localdex resume thr_done/);
 });
 
 test("status without a job id only shows jobs from the current Claude session", () => {
@@ -1411,7 +1411,7 @@ test("result returns the stored output for the latest finished job by default", 
   assert.equal(result.status, 0, result.stderr);
   assert.equal(
     result.stdout,
-    "Reviewed uncommitted changes.\nNo material issues found.\n\nCodex session ID: thr_review_finished\nResume in Codex: codex resume thr_review_finished\n"
+    "Reviewed uncommitted changes.\nNo material issues found.\n\nCodex session ID: thr_review_finished\nResume in Codex: localdex resume thr_review_finished\n"
   );
 });
 
@@ -1509,7 +1509,7 @@ test("result without a job id prefers the latest finished job from the current C
   assert.equal(result.status, 0, result.stderr);
   assert.equal(
     result.stdout,
-    "Current session output.\n\nCodex session ID: thr_current\nResume in Codex: codex resume thr_current\n"
+    "Current session output.\n\nCodex session ID: thr_current\nResume in Codex: localdex resume thr_current\n"
   );
 });
 
@@ -1536,7 +1536,7 @@ test("result for a finished write-capable task returns the raw Codex final respo
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /^Handled the requested task\.\nTask prompt accepted\.\n/);
   assert.match(result.stdout, /Codex session ID: thr_[a-z0-9]+/i);
-  assert.match(result.stdout, /Resume in Codex: codex resume thr_[a-z0-9]+/i);
+  assert.match(result.stdout, /Resume in Codex: localdex resume thr_[a-z0-9]+/i);
 });
 
 test("cancel stops an active background job and marks it cancelled", async (t) => {
@@ -2032,8 +2032,8 @@ test("stop hook logs running tasks to stderr without blocking when the review ga
   assert.equal(blocked.status, 0, blocked.stderr);
   assert.equal(blocked.stdout.trim(), "");
   assert.match(blocked.stderr, /Codex task task-live is still running/i);
-  assert.match(blocked.stderr, /\/codex:status/i);
-  assert.match(blocked.stderr, /\/codex:cancel task-live/i);
+  assert.match(blocked.stderr, /\/localdex:status/i);
+  assert.match(blocked.stderr, /\/localdex:cancel task-live/i);
 });
 
 test("stop hook allows the stop when the review gate is enabled and the stop-time review task is clean", () => {
@@ -2085,7 +2085,7 @@ test("stop hook does not block when Codex is unavailable even if the review gate
   assert.equal(allowed.status, 0, allowed.stderr);
   assert.equal(allowed.stdout.trim(), "");
   assert.match(allowed.stderr, /Codex is not set up for the review gate/i);
-  assert.match(allowed.stderr, /Run \/codex:setup/i);
+  assert.match(allowed.stderr, /Run \/localdex:setup/i);
 });
 
 test("stop hook runs the actual task when auth status looks stale", () => {

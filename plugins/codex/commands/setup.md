@@ -10,16 +10,16 @@ Run:
 node "${CLAUDE_PLUGIN_ROOT}/scripts/codex-companion.mjs" setup --json $ARGUMENTS
 ```
 
-If the result says Codex is unavailable and npm is available:
-- Use `AskUserQuestion` exactly once to ask whether Claude should install Codex now.
+If the result says localdex is unavailable:
+- Use `AskUserQuestion` exactly once to ask whether Claude should install localdex now.
 - Put the install option first and suffix it with `(Recommended)`.
 - Use these two options:
-  - `Install Codex (Recommended)`
+  - `Install localdex (Recommended)`
   - `Skip for now`
-- If the user chooses install, run:
+- If the user chooses install, run (requires the codexforlocal repo checkout and a Rust toolchain):
 
 ```bash
-npm install -g @openai/codex
+/Users/master/Documents/antigravity/068-CodexForLocal/codexforlocal/scripts/install-localdex.sh
 ```
 
 - Then rerun:
@@ -34,4 +34,4 @@ If Codex is already installed or npm is unavailable:
 Output rules:
 - Present the final setup output to the user.
 - If installation was skipped, present the original setup output.
-- If Codex is installed but not authenticated, preserve the guidance to run `!codex login`.
+- If Codex is installed but not authenticated, preserve the guidance to run `!localdex login`.

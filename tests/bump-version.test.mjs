@@ -37,7 +37,7 @@ function makeVersionFixture() {
     }
   });
   writeJson(path.join(root, "plugins", "codex", ".claude-plugin", "plugin.json"), {
-    name: "codex",
+    name: "localdex",
     version: "1.0.2"
   });
   writeJson(path.join(root, ".claude-plugin", "marketplace.json"), {
@@ -46,7 +46,7 @@ function makeVersionFixture() {
     },
     plugins: [
       {
-        name: "codex",
+        name: "localdex",
         version: "1.0.2"
       }
     ]

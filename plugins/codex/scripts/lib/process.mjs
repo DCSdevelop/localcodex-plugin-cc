@@ -1,6 +1,10 @@
 import { spawnSync } from "node:child_process";
 import process from "node:process";
 
+// Name of the Codex CLI binary to invoke (this fork targets the LM Studio-backed
+// "localdex" build; override with CODEX_COMPANION_BIN to use another binary).
+export const CODEX_BIN = process.env.CODEX_COMPANION_BIN || "localdex";
+
 export function runCommand(command, args = [], options = {}) {
   const result = spawnSync(command, args, {
     cwd: options.cwd,

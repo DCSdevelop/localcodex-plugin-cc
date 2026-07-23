@@ -55,5 +55,5 @@ test("renderStoredJobResult prefers rendered output for structured review jobs",
   assert.match(output, /^# Codex Adversarial Review/);
   assert.doesNotMatch(output, /^\{/);
   assert.match(output, /Codex session ID: thr_123/);
-  assert.match(output, /Resume in Codex: codex resume thr_123/);
+  assert.match(output, /Resume in Codex: localdex resume thr_123/);
 });
