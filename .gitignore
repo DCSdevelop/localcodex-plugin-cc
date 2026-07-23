@@ -148,3 +148,7 @@ vite.config.ts.timestamp-*
 
 output/
 plugins/codex/.generated/
+
+# Claude Code session artifacts (memory-plugin placeholders)
+CLAUDE.md
+.claude/
