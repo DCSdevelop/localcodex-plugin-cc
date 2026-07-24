@@ -16,10 +16,10 @@ If the result says localdex is unavailable:
 - Use these two options:
   - `Install localdex (Recommended)`
   - `Skip for now`
-- If the user chooses install, run (requires the codexforlocal repo checkout and a Rust toolchain):
+- If the user chooses install, locate their codexforlocal checkout (clone https://github.com/DCSdevelop/codexforlocal if they don't have one) and run its install script (requires a Rust toolchain):
 
 ```bash
-/Users/master/Documents/antigravity/068-CodexForLocal/codexforlocal/scripts/install-localdex.sh
+<path-to-codexforlocal>/scripts/install-localdex.sh
 ```
 
 - Then rerun:

@@ -31,16 +31,21 @@ What changed relative to upstream:
 
 ## Install
 
-Install the `localdex` binary (from the codexforlocal repo checkout):
+Install the `localdex` binary (needs a Rust toolchain):
 
 ```bash
-/Users/master/Documents/antigravity/068-CodexForLocal/codexforlocal/scripts/install-localdex.sh
+git clone https://github.com/DCSdevelop/codexforlocal
+cd codexforlocal && ./scripts/install-localdex.sh
 ```
 
-Add this repo as a local marketplace in Claude Code (in-app, or `claude plugin marketplace add <path>` from a shell):
+Clone this repo and add it as a local marketplace in Claude Code (in-app, or `claude plugin marketplace add <path>` from a shell):
 
 ```bash
-/plugin marketplace add /Users/master/Documents/antigravity/068-CodexForLocal/localcodex-plugin-cc
+git clone https://github.com/DCSdevelop/localcodex-plugin-cc
+```
+
+```bash
+/plugin marketplace add /path/to/localcodex-plugin-cc
 ```
 
 Install the plugin:
