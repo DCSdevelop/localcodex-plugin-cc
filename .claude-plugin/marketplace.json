@@ -5,13 +5,13 @@
   },
   "metadata": {
     "description": "Codex plugins (LM Studio-backed localdex fork) to use in Claude Code for delegation and code review.",
-    "version": "1.0.8"
+    "version": "1.0.9"
   },
   "plugins": [
     {
       "name": "localdex",
       "description": "Use a local LM Studio-backed Codex (localdex) from Claude Code to review code or delegate tasks.",
-      "version": "1.0.8",
+      "version": "1.0.9",
       "author": {
         "name": "OpenAI"
       },

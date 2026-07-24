@@ -19,7 +19,33 @@ Delegate to localdex when ALL of these hold:
 - The answer does not need Claude-level reasoning: summaries, explanations, boilerplate,
   config drafts, docstrings, commit-message drafts, small standalone scripts, second opinions.
 - Claude's own tools would NOT answer it near-instantly (see anti-patterns).
-- Latency is acceptable: a localdex turn takes tens of seconds to minutes.
+- The estimated time fits the budget below.
+
+## Time budget — maximum affordable time
+
+Free tokens are not worth unbounded wall clock. Budget BEFORE delegating:
+
+- Estimate: `expected output tokens ÷ 27 tok/s` + ~30 s per turn of overhead (prompt
+  ingestion + tool execution + round-trips) + ~15 s model load if it idled out.
+  One pointed file-read + summary ≈ 1–3 min.
+- **Hard cap: 5 minutes.** If the estimate exceeds it, do the task in Claude instead —
+  a task Claude finishes in ~2 min is a bad trade at >5 min locally. Delegate past the cap
+  only with `--background` AND the user's explicit ok.
+- Each tool call the local model makes adds a full re-ingestion turn — a task needing more
+  than ~3 tool calls (multi-file exploration) will blow the budget; keep it in Claude.
+- **Enforce the cap while waiting**: if a foreground delegation passes ~5 min with no result,
+  cancel it (`/localdex:cancel`), do the work in Claude, and tell the user about the fallback.
+
+## Pre-flight check (run before every delegation)
+
+Run `lms ps` first:
+- **Model not loaded, or CONTEXT below 32768** (a JIT reload after idle reverts to the 8k
+  default, which makes the model drift off-task): reload it properly —
+  `lms load qwen/qwen3-coder-30b --context-length 32768 --ttl 3600 --yes` (~15 s).
+  The `--ttl 3600` matters: it auto-unloads the model after 60 idle minutes so it does not
+  pin ~17 GB of RAM forever.
+- **STATUS is GENERATING before you sent anything**: something else is using the server and
+  your request will queue behind it — do not delegate time-sensitive work; do it in Claude.
 
 Strong extra reasons to delegate even borderline tasks:
 - The content is **privacy-sensitive** and should not leave the machine.
